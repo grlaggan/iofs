@@ -1,0 +1,52 @@
+### === Python (DRF server) === ###
+# Виртуальное окружение
+/venv/
+*/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.Python
+/iofs_server/.env/
+
+# Логи и кэш
+*.log
+*.sqlite3
+*.pid
+*.cache
+.coverage
+.hypothesis/
+.pytest_cache/
+
+# Django
+*.egg-info/
+*.pot
+*.mo
+staticfiles/
+
+### === Next.js (client) === ###
+# Зависимости и сборка
+/iofs_client/node_modules/
+/iofs_client/.next/
+/iofs_client/out/
+/iofs_client/.turbo/
+
+# Окружение и IDE
+/iofs_client/.env*.local
+/iofs_client/.next-env.d.ts
+/iofs_client/.eslintcache
+/iofs_client/.vscode/
+
+# Системные файлы
+.DS_Store
+*.pem
+
+### === Общее === ###
+# Файлы IDE (VSCode, PyCharm)
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

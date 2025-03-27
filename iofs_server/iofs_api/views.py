@@ -5,15 +5,20 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.decorators import action
-from django.contrib.auth.models import User
 
 from iofs_api import models, serializers
+from iofs_api.models import PostCategory
 from iofs_api.permissions import IsOwnerOrReadOnly
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = models.User.objects.all()
     serializer_class = serializers.UserSerializer
+
+
+class PostCategoryViewSet(viewsets.ModelViewSet):
+    queryset = PostCategory.objects.all()
+    serializer_class = serializers.PostCategorySerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -25,6 +30,17 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         category = models.PostCategory.objects.get(name=self.request.query_params.get('category', 'Математика'))
         serializer.save(creator=self.request.user, category=category)
+
+
+    def list(self, request, *args, **kwargs):
+        data = request.query_params.get('theme', '')
+        print(data)
+
+        if data:
+            queryset = self.queryset.filter(theme=data)
+            return Response(serializers.PostSerializer(queryset, many=True).data)
+
+        return Response(serializers.PostSerializer(self.queryset, many=True).data)
 
 
     @action(detail=False, methods=[HTTPMethod.GET], permission_classes=[IsAuthenticated])

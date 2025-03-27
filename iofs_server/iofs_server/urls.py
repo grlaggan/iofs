@@ -16,10 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework.authtoken import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('iofs_api.urls', namespace='iofs_api')),
+    path('', include('iofs_api.urls', namespace='iofs_api')),
     path('api-token-auth/', views.obtain_auth_token, name='api-token-auth'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

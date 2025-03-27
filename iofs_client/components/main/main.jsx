@@ -16,7 +16,7 @@ export function Main() {
       />
       <Filter categories={categoriesData} />
       <div className="line"></div>
-      <PostsList context={ApiUrlContext} />
+      <PostsList />
     </main>
   );
 }

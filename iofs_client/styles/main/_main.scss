@@ -2,8 +2,7 @@ $main-white-color: #CCD0CF;
 $main-button-color: #253745;
 
 .main {
-  width: 962px;
-  height: 836px;
+  max-width: 962px;
   border-inline: 1px solid $main-white-color;
   margin-inline: auto;
 

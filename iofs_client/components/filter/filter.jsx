@@ -1,12 +1,15 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { ArrowIconDown } from "../post/icons";
+import { ApiUrlContext } from "../../pages";
 
 export function Filter({ categories }) {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
-  const [selectedSort, setSelectedSort] = useState("Новое");
+  const [selectedSort, setSelectedSort] = useState("По дате создания");
   const [showCategoryDropdown, setCategorySortDropdown] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Все");
+
+  const { setUrlForGetPosts } = useContext(ApiUrlContext);
 
   const handleSortSelect = (value) => {
     setShowSortDropdown(false);
@@ -37,24 +40,44 @@ export function Filter({ categories }) {
             <div
               className={clsx(
                 "filter__show-part",
-                selectedSort === "Новое"
+                selectedSort === "По дате создания"
                   ? "filter__show-part--selected"
                   : "bg-transparent"
               )}
-              onClick={() => handleSortSelect("Новое")}
+              onClick={() => {
+                handleSortSelect("По дате создания");
+                setUrlForGetPosts((lastUrl) => {
+                  const urlObj = new URL(lastUrl);
+
+                  urlObj.searchParams.get("filter")
+                    ? urlObj.searchParams.set("filter", "new")
+                    : urlObj.searchParams.append("filter", "new");
+                  return urlObj.toString();
+                });
+              }}
             >
-              Новое
+              По дате создания
             </div>
             <div
               className={clsx(
                 "filter__show-part",
-                selectedSort === "Все"
+                selectedSort === "По количеству лайков"
                   ? "filter__show-part--selected"
                   : "bg-transparent"
               )}
-              onClick={() => handleSortSelect("Все")}
+              onClick={() => {
+                handleSortSelect("По количеству лайков");
+                setUrlForGetPosts((lastUrl) => {
+                  const urlObj = new URL(lastUrl);
+
+                  urlObj.searchParams.get("filter")
+                    ? urlObj.searchParams.set("filter", "likes")
+                    : urlObj.searchParams.append("filter", "likes");
+                  return urlObj.toString();
+                });
+              }}
             >
-              Все
+              По количеству лайков
             </div>
           </div>
         )}
@@ -80,7 +103,15 @@ export function Filter({ categories }) {
                   ? "filter__show-part--selected"
                   : "bg-transparent"
               )}
-              onClick={() => handleCategorySelect("Все")}
+              onClick={() => {
+                handleCategorySelect("Все");
+                setUrlForGetPosts((lastUrl) => {
+                  const urlObj = new URL(lastUrl);
+
+                  urlObj.searchParams.delete("category");
+                  return urlObj.toString();
+                });
+              }}
             >
               Все
             </div>
@@ -92,7 +123,16 @@ export function Filter({ categories }) {
                     ? "filter__show-part--selected"
                     : "bg-transparent"
                 )}
-                onClick={() => handleCategorySelect(category.name)}
+                onClick={() => {
+                  handleCategorySelect(category.name);
+                  setUrlForGetPosts((lastUrl) => {
+                    const urlObj = new URL(lastUrl);
+                    urlObj.searchParams.get("category")
+                      ? urlObj.searchParams.set("category", category.name)
+                      : urlObj.searchParams.append("category", category.name);
+                    return urlObj.toString();
+                  });
+                }}
                 key={category.id}
               >
                 {category.name}

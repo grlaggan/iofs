@@ -22,7 +22,7 @@ class PostCategoryViewSet(viewsets.ModelViewSet):
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = models.Post.objects.all()
+    queryset = models.Post.objects.all().order_by('-created')
     serializer_class = serializers.PostSerializer
     permission_classes = (IsOwnerOrReadOnly, )
 
@@ -33,12 +33,28 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
     def list(self, request, *args, **kwargs):
-        data = request.query_params.get('theme', '')
-        print(data)
+        data_for_theme = request.query_params.get('theme', '')
+        data_for_category = request.query_params.get('category', '')
+        data_filter = request.query_params.get('filter', '')
+        print(data_for_theme)
 
-        if data:
-            queryset = self.queryset.filter(theme=data)
+        if data_for_theme:
+            queryset = self.queryset.filter(theme=data_for_theme)
             return Response(serializers.PostSerializer(queryset, many=True).data)
+
+        if data_for_category:
+            queryset = self.queryset.filter(category__name=data_for_category)
+            return Response(serializers.PostSerializer(queryset, many=True).data)
+
+        if data_filter:
+            if data_filter == 'new':
+                queryset = self.queryset.order_by('-created')
+                return Response(serializers.PostSerializer(queryset, many=True).data)
+
+        if data_filter:
+            if data_filter == 'likes':
+                queryset = self.queryset.order_by('likes')
+                return Response(serializers.PostSerializer(queryset, many=True).data)
 
         return Response(serializers.PostSerializer(self.queryset, many=True).data)
 

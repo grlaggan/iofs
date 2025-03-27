@@ -1,0 +1,13 @@
+$main-button-color: #253745;
+
+.button {
+  color:white;
+
+  display: flex;
+  padding: 10px 20px;
+  align-items: center;
+  justify-content: center;
+  background-color: $main-button-color;
+
+  border-radius: 50px;
+}

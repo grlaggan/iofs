@@ -1,0 +1,42 @@
+$main-white-color: #CCD0CF;
+
+.header {
+  border-bottom: 1px $main-white-color solid;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 10px;
+  padding-inline: 20px;
+  gap: 30px;
+
+
+  .logo {
+    font-family: 'Space Grotesk', sans-serif;
+    text-transform: lowercase;
+    font-size: 36px;
+    color: white;
+  }
+
+  .header__input {
+    display: flex;
+    padding: 7px 20px;
+    gap: 10px;
+    align-items: center;
+    justify-content: start;
+    width: 615px;
+    border-radius: 50px;
+    background: rgba(155, 168, 171, 0.50);
+
+    input {
+      width: 100%;
+      background-color: transparent;
+      color: $main-white-color;
+
+      &:focus {
+        outline: none; 
+        border-color: none;
+        box-shadow: none;
+      }
+    }
+  }
+}

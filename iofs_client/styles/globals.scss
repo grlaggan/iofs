@@ -1,9 +1,19 @@
+@use './header/header';
+@use './button';
+@use './media';
+@use './main/main';
+@use './post/post';
+@use './filter/filter';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-$main-bg-blue-color: #06141B;
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth@75..100&family=Space+Grotesk&display=swap');
+@import '../node_modules/reset-css/reset.css';
 
+$main-bg-blue-color: #06141B;
+$main-white-color: #CCD0CF;
 
 body {
   background-color: $main-bg-blue-color;

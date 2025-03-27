@@ -1,11 +1,11 @@
 import "../styles/globals.css";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin", "cyrillic"] });
+const roboto = Roboto({ subsets: ["latin", "cyrillic"] });
 
 export default function App({ Component, pageProps }) {
   return (
-    <div className={inter.className}>
+    <div className={roboto.className}>
       <Component {...pageProps} />
     </div>
   );

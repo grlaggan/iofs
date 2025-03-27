@@ -1,0 +1,18 @@
+@import './header/header-media';
+
+@include header {
+  .header {
+    .logo {
+      font-size: 24px;
+    }
+
+    .header__input {
+      font-size: 12px;
+      padding: 7px 15px;
+    }
+
+    .button {
+      font-size: 12px;
+    }
+  }
+}

@@ -6,9 +6,11 @@
   },
   "dependencies": {
     "axios": "^1.8.4",
+    "clsx": "^2.1.1",
     "next": "^15.2.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "reset-css": "^5.0.2"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",

@@ -3,8 +3,20 @@ $main-button-color: #253745;
 
 .main {
   max-width: 962px;
+  min-height: 100vh;
   border-inline: 1px solid $main-white-color;
   margin-inline: auto;
+
+  .filter-wrapper {
+    max-width: 794px;
+    margin-inline: auto;
+    padding-left: 20px;
+  }
+
+  .posts-list {
+    max-width: 794px;
+    margin-inline: auto;
+  }
 
   .category-block__scroll-next {
     position: absolute;

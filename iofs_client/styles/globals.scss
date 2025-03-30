@@ -4,6 +4,9 @@
 @use './main/main';
 @use './post/post';
 @use './filter/filter';
+@use './user-logic/authotization';
+@use './post/detail_post';
+@use './user/user';
 
 @tailwind base;
 @tailwind components;
@@ -17,4 +20,20 @@ $main-white-color: #CCD0CF;
 
 body {
   background-color: $main-bg-blue-color;
+
+  .bg-main-white {
+    background-color: $main-white-color;
+  }
+
+  .blured {
+    filter: blur(2px);
+  }
+
+  .text-main-white {
+    color: $main-white-color;
+  }
+
+  .liked {
+    color: #E63946;
+  }
 }

@@ -1,4 +1,5 @@
 @import './header/header-media';
+@import './main/main-media';
 
 @include header {
   .header {
@@ -13,6 +14,30 @@
 
     .button {
       font-size: 12px;
+    }
+  }
+}
+
+@include main_two_blocks {
+  .main {
+    .posts-list {
+      width: 790px;
+    }
+  }
+}
+
+@include main {
+  .main {
+    .posts-list {
+      width: 520px;
+    }
+  }
+}
+
+@include main_one_block {
+  .main {
+    .posts-list {
+      width: 250px;
     }
   }
 }

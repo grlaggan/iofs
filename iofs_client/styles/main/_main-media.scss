@@ -1,0 +1,17 @@
+@mixin main() {
+  @media (max-width: 792px) {
+    @content
+  }
+};
+
+@mixin main_two_blocks() {
+  @media (max-width: 824px) {
+    @content
+  }
+};
+
+@mixin main_one_block() {
+  @media (max-width: 528px) {
+    @content
+  }
+};

@@ -1,0 +1,19 @@
+$main-white-color: #CCD0CF;
+
+.detail-post {
+  max-width: 794px;
+  margin-inline: auto;
+
+  .detail-post__user {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+  }
+
+  .detail-post__text {
+    color: $main-white-color;
+    font-size: 12px;
+  }
+
+}

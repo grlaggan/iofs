@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useState, useContext } from "react";
 import { ArrowIconDown } from "../post/icons";
-import { ApiUrlContext } from "../../pages";
+import { ApiUrlContext } from "../../pages/_app";
 
 export function Filter({ categories }) {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
@@ -22,8 +22,8 @@ export function Filter({ categories }) {
   };
 
   return (
-    <div className="flex ml-[100px]">
-      <div className="relative filter-wrapper inline-block text-xs">
+    <div className="flex filter-wrapper">
+      <div className="relative inline-block text-xs">
         <button
           onClick={() => {
             setShowSortDropdown((lastValue) => {

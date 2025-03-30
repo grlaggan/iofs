@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useContext } from "react";
-import { ApiUrlContext } from "../../pages";
+import { ApiUrlContext } from "../../pages/_app";
 
 export function CategoryBlock({ image, categoryName, refBlock }) {
   const { setUrlForGetPosts } = useContext(ApiUrlContext);

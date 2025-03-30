@@ -27,7 +27,7 @@ class Post(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
     created = models.DateTimeField(auto_now_add=True)
 
@@ -36,7 +36,7 @@ class Like(models.Model):
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='favorites')
     created = models.DateTimeField(auto_now_add=True)
 

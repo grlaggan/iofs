@@ -18,12 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework.authtoken import views
+from iofs_api.views import CustomTokenObtainPairView, CustomTokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('iofs_api.urls', namespace='iofs_api')),
-    path('api-token-auth/', views.obtain_auth_token, name='api-token-auth'),
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from iofs_api.models import Post, PostCategory, User
+from django.contrib.auth.password_validation import validate_password
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -8,14 +9,43 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password', 'avatar')
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'avatar')
+
+
+class ChangeUserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=False)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'last_name', 'first_name', 'email', 'avatar')
+
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    password1 = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    password2 = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'password1', 'password2')
+
+    def validate(self, attrs):
+        password1 = attrs.get('password1', '')
+        password2 = attrs.get('password2', '')
+
+        if password1 != password2:
+            raise serializers.ValidationError({'password': 'Пароли должны совпадать!'})
+
+        return attrs
 
     def create(self, validated_data):
+        password1 = validated_data.get('password1', '')
+
         user = User.objects.create_user(
             username=validated_data['username'],
-            password=validated_data['password'],
         )
 
+        user.set_password(password1)
+        user.save()
         return user
 
 
@@ -31,8 +61,6 @@ class PostSerializer(serializers.ModelSerializer):
     creator = UserSerializer(read_only=True)
     category = serializers.SlugRelatedField(read_only=True, slug_field='name')
     likes_count = serializers.SerializerMethodField()
-    is_liked = serializers.SerializerMethodField()
-    is_favorite = serializers.SerializerMethodField()
 
 
     class Meta:
@@ -45,8 +73,6 @@ class PostSerializer(serializers.ModelSerializer):
                   'text',
                   'created',
                   'likes_count',
-                  'is_liked',
-                  'is_favorite'
                   ]
 
 
@@ -54,22 +80,5 @@ class PostSerializer(serializers.ModelSerializer):
     def get_likes_count(obj):
         return obj.likes.count()
 
-
-    def get_is_liked(self, obj):
-        request = self.context.get('request')
-
-        if request and request.user.is_authenticated:
-            return obj.likes.filter(user=request.user).exists()
-
-        return False
-
-
-    def get_is_favorite(self, obj):
-        request = self.context.get('request')
-
-        if request and request.user.is_authenticated:
-            return obj.favorites.filter(user=request.user).exists()
-
-        return False
 
 

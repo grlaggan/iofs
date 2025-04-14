@@ -2,21 +2,77 @@ from http import HTTPMethod
 
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.decorators import api_view
+from rest_framework.parsers import MultiPartParser, FormParser
+
+from django.contrib.auth.hashers import make_password, check_password
 
 from iofs_api import models, serializers
 from iofs_api.models import PostCategory
-from iofs_api.permissions import IsOwnerOrReadOnly
+from iofs_api.permissions import IsOwnerOrReadOnly, IsOwner
+from rest_framework.views import APIView
+
+
+class ChangeUserView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        user = request.user
+        serializer = serializers.ChangeUserSerializer(user, data=request.data)
+        print(request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            print(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePassword(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        user = request.user
+        password = request.data.get('password')
+        new_password = request.data.get('new_password')
+        confirm_password = request.data.get('confirm_password')
+
+        if check_password(password, user.password):
+            if new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                return Response(serializers.UserSerializer(user).data, status=status.HTTP_200_OK)
+
+            return Response({'status': 'fail'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'status': 'fail'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = models.User.objects.all()
     serializer_class = serializers.UserSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [AllowAny()]
+
+        return super(UserViewSet, self).get_permissions()
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return serializers.RegistrationSerializer
+
+        return super(UserViewSet, self).get_serializer_class()
 
     def retrieve(self, request, *args, **kwargs):
         user = self.queryset.get(id=request.user.id)
@@ -30,6 +86,19 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         if serializer.is_valid():
             response = super().post(request, *args, **kwargs)
 
+            refresh_token = response.data.get('refresh')
+
+            response.set_cookie(
+                key='refresh',
+                value=refresh_token,
+                httponly=True,
+                max_age=60 * 60 * 24 * 7,
+                samesite='None',
+                secure=True
+            )
+
+            del response.data['refresh']
+
             token = AccessToken(serializer.validated_data['access'])
             response.data['user'] = serializers.UserSerializer(models.User.objects.get(id=token.payload['user_id'])).data
 
@@ -40,7 +109,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 class CustomTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
-        refresh_token = request.data.get('refresh')
+        refresh_token = request.COOKIES.get('refresh')
 
         print(refresh_token)
         if not refresh_token:
@@ -77,49 +146,58 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
     def perform_create(self, serializer):
-        category = models.PostCategory.objects.get(name=self.request.query_params.get('category', 'Математика'))
+        print(self.request.data.get('category'))
+        category = models.PostCategory.objects.get(name=self.request.data.get('category', 'Математика'))
         serializer.save(creator=self.request.user, category=category)
 
 
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        return super(PostViewSet, self).create(request, *args, **kwargs)
+
+
     def list(self, request, *args, **kwargs):
-        data_for_theme = request.query_params.get('theme', '')
-        data_for_category = request.query_params.get('category', '')
-        data_filter = request.query_params.get('filter', '')
-
         try:
-            if data_for_theme:
-                queryset = self.queryset.filter(theme=data_for_theme)
-                return Response(serializers.PostSerializer(queryset, many=True).data)
+            category = request.query_params.get('category', None)
+            theme = request.query_params.get('theme', None)
 
-            if data_for_category:
-                queryset = self.queryset.filter(category__name=data_for_category)
-                return Response(serializers.PostSerializer(queryset, many=True).data)
+            if category:
+                self.queryset = self.queryset.filter(category__name=category)
 
-            if data_filter:
-                if data_filter == 'new':
-                    queryset = self.queryset.order_by('-created')
-                    return Response(serializers.PostSerializer(queryset, many=True).data)
+            if theme:
+                self.queryset = self.queryset.filter(theme=theme)
 
-                if data_filter == 'likes':
-                    queryset = self.queryset.order_by('likes')
-                    return Response(serializers.PostSerializer(queryset, many=True).data)
+            filter_param = request.query_params.get('filter', '')
+            if filter_param:
+                if filter_param == 'new':
+                    self.queryset = self.queryset.order_by('-created')
 
-                if data_filter == 'liked':
-                    queryset = self.queryset.filter(likes__user=request.user)
-                    return Response(serializers.PostSerializer(queryset, many=True).data)
+                if filter_param == 'likes':
+                    self.queryset = self.queryset.order_by('likes')
+                    print(self.queryset)
 
-                if data_filter == 'favorites':
-                    queryset = self.queryset.filter(favorites__user=request.user)
-                    return Response(serializers.PostSerializer(queryset, many=True).data)
+                if filter_param == 'liked':
+                    self.queryset = self.queryset.filter(likes__user=request.user)
 
-                if data_filter == 'of_user':
-                    queryset = self.queryset.filter(creator=request.user)
-                    return Response(serializers.PostSerializer(queryset, many=True).data)
+                if filter_param == 'favorites':
+                    self.queryset = self.queryset.filter(favorites__user=request.user)
 
-        except:
+                if filter_param == 'of_user':
+                    self.queryset = self.queryset.filter(creator=request.user)
+        except TypeError:
             return Response(serializers.PostSerializer(self.queryset, many=True).data)
 
         return Response(serializers.PostSerializer(self.queryset, many=True).data)
+
+
+    @action(detail=True, methods=[HTTPMethod.DELETE], permission_classes=[IsOwner])
+    def delete(self, request, pk):
+        if request and request.user.is_authenticated:
+            post = models.Post.objects.get(id=pk)
+            post.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
     @action(detail=False, methods=[HTTPMethod.GET], permission_classes=[IsAuthenticated])
@@ -156,3 +234,11 @@ class PostViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['GET'])
+def logout(request):
+    response = Response(status=status.HTTP_205_RESET_CONTENT)
+    response.delete_cookie('refresh')
+    print(response.cookies)
+
+    return response

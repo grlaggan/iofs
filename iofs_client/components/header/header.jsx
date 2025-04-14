@@ -1,62 +1,109 @@
 import { SearchIcon } from "./icons";
-import { useContext, useRef } from "react";
-import { ApiUrlContext } from "../../pages/_app";
+import { useContext, useEffect, useRef } from "react";
 import { Blurred } from "../../pages/_app";
-import { useAuth } from "../user-logic/auth-context";
 import Link from "next/link";
 import Image from "next/image";
 import defaultAvatar from "../post/images/default-avatar.png";
-
+import { Context } from "../../pages/_app";
 import { Button } from "../button";
+import { observer } from "mobx-react-lite";
+import { RegContext } from "../../pages/_app";
+import gsap from "gsap";
+import clsx from "clsx";
 
-export function Header() {
-  const { state } = useAuth();
-  const { setIsAuthorization } = useContext(Blurred);
+export const Header = observer(() => {
+  const { isAuthorization, setIsAuthorization } = useContext(Blurred);
+  const { setIsAuthProcess } = useContext(RegContext);
+  const { store } = useContext(Context);
+
+  const header = useRef(null);
+  const userBlock = useRef(null);
+  const inputHeader = useRef(null);
+  const logo = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        userBlock.current,
+        {
+          x: 20,
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.5,
+        }
+      );
+      gsap.fromTo(
+        inputHeader.current,
+        {
+          y: -50,
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+        }
+      );
+    }, header.current);
+    gsap.fromTo(
+      logo.current,
+      {
+        x: -20,
+        opacity: 0,
+      },
+      {
+        x: 0,
+        opacity: 1,
+        duration: 0.5,
+      }
+    );
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <header className="header">
-      <span className="logo">iofs</span>
-      <InputHeader />
+    <header
+      className={clsx("header", isAuthorization && "blurred")}
+      ref={header}
+    >
+      <span className="logo" ref={logo}>
+        iofs
+      </span>
+      <InputHeader ref={inputHeader} />
 
-      {state.accessToken ? (
-        <Link
-          href={`/users/${state.userData?.id}`}
-          className="flex items-center gap-2 h-8 rounded-full overflow-hidden flex-shrink-0"
-        >
-          <div className="w-8 h-8 rounded-full overflow-hidden">
-            <Image
-              src={
-                state.userData?.avatar
-                  ? `http://127.0.0.1:5000/${state.userData?.avatar}`
-                  : defaultAvatar
-              }
-              width={32}
-              height={32}
-              unoptimized
-              className="object-cover w-full h-full"
-            />
-          </div>
-          <span className="header__username">
-            {state.userData?.last_name
-              ? `${state.userData?.first_name} ${state.userData?.last_name}`
-              : `${state.userData?.username}`}
-          </span>
-        </Link>
-      ) : (
-        <Button onClick={() => setIsAuthorization((lastValue) => !lastValue)}>
-          Войти
-        </Button>
-      )}
+      <div ref={userBlock}>
+        {store.isAuth ? (
+          <Link
+            href={`/users/${store.user?.id}`}
+            className="flex items-center profile"
+          >
+            <span className="text-main-white hover:underline">
+              Личный кабинет
+            </span>
+          </Link>
+        ) : (
+          <Button
+            onClick={() => {
+              setIsAuthorization(true);
+              setIsAuthProcess(true);
+            }}
+          >
+            Войти
+          </Button>
+        )}
+      </div>
     </header>
   );
-}
+});
 
-function InputHeader() {
+function InputHeader({ ref }) {
   const inputRef = useRef(null);
-  const { setUrlForGetPosts } = useContext(ApiUrlContext);
+  const { store } = useContext(Context);
 
   return (
-    <div className="header__input">
+    <div className="header__input" ref={ref}>
       <label htmlFor="posts-search-input" className="header__input-icon">
         <SearchIcon width="15" height="15" />
       </label>
@@ -66,20 +113,14 @@ function InputHeader() {
         id="posts-search-input"
         placeholder="Search"
         autoComplete="off"
-        onKeyDown={(event) => {
-          if (event.code == "Enter") {
-            setUrlForGetPosts((lastUrl) => {
-              const urlObj = new URL(lastUrl);
-              const getParams = new URLSearchParams(urlObj.search);
+        onChange={() => {
+          const urlObj = new URL(store.urlPosts);
 
-              getParams.set("theme", inputRef.current.value);
+          urlObj.searchParams.get("theme")
+            ? urlObj.searchParams.set("theme", inputRef.current.value)
+            : urlObj.searchParams.append("theme", inputRef.current.value);
 
-              urlObj.search = getParams.toString().split("=")[1]
-                ? getParams.toString()
-                : "";
-              return urlObj.toString();
-            });
-          }
+          store.setUrlPosts(urlObj.toString());
         }}
       />
     </div>

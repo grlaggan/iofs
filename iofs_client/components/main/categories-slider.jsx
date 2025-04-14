@@ -1,11 +1,17 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { CategoryBlock } from "./category-block";
 import { ArrowIconRight, ArrowIconLeft } from "./icons";
+import UserService from "../services/user_service";
 import clsx from "clsx";
+import { Context } from "../../pages/_app";
+import gsap from "gsap";
 
 export function CategoriesSlider({ categoriesData, setCategoriesData }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const blocksRef = useRef([]);
+  const { store } = useContext(Context);
+
+  const slider = useRef(null);
 
   const moveToBlock = (index) => {
     blocksRef.current[index]?.scrollIntoView({
@@ -47,20 +53,28 @@ export function CategoriesSlider({ categoriesData, setCategoriesData }) {
   const categoriesApiUrl = "http://127.0.0.1:5000/post_categories/";
 
   useEffect(() => {
-    fetch(categoriesApiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not OK");
-        }
+    UserService.getItems(categoriesApiUrl).then((result) => {
+      setCategoriesData(result.data);
+      console.log(categoriesData);
+      store.setCategories(result.data);
+    });
+  }, []);
 
-        return response.json();
-      })
-      .then((data) => setCategoriesData(data))
-      .catch(() => []);
+  useEffect(() => {
+    gsap.fromTo(
+      slider.current,
+      {
+        opacity: 0,
+      },
+      {
+        opacity: 1,
+        duration: 2,
+      }
+    );
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative h-[228px]" ref={slider}>
       <button
         className={clsx(
           "category-block__scroll-next",

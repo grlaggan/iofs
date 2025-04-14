@@ -1,39 +1,46 @@
 import { GoogleIcon } from "../main/icons";
 import { GithubIcon } from "../main/icons";
-import { useRef, useContext } from "react";
-import { useApi } from "./api";
-import { useAuth } from "./auth-context";
+import { useContext, useState, useRef, useEffect } from "react";
 import { CrossIcon } from "./icons";
 import { Blurred } from "../../pages/_app";
+import { RegContext } from "../../pages/_app";
+import { Context } from "../../pages/_app";
+import { observer } from "mobx-react-lite";
+import gsap from "gsap";
 
-const loginAPI = "http://127.0.0.1:5000/api/token/";
-
-export function Authorization() {
+export const Authorization = observer(() => {
   const { setIsAuthorization } = useContext(Blurred);
-  const usernameInput = useRef(null);
-  const passwordInput = useRef(null);
-  const { dispatch } = useAuth();
+  const { setIsAuthProcess } = useContext(RegContext);
 
-  const authorize = async () => {
-    const username = usernameInput.current.value;
-    const password = passwordInput.current.value;
+  const authRef = useRef(null);
 
-    const response = await fetch(loginAPI, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: username, password: password }),
-    });
+  const [password, setPassword] = useState();
+  const [username, setUsername] = useState();
+  const { store } = useContext(Context);
 
-    const { refresh, access, user } = await response.json();
-    localStorage.setItem("refresh", refresh);
-    dispatch({ type: "LOGIN_SUCCESS", payload: access, user: user });
-    setIsAuthorization(() => false);
+  const authorize = () => {
+    store.login(username, password);
+    setIsAuthorization(false);
+    store.setLoadUserLogin(true);
   };
 
+  useEffect(() => {
+    gsap.fromTo(
+      authRef.current,
+      {
+        scale: 0.8,
+        opacity: 0,
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        duration: 0.2,
+      }
+    );
+  }, []);
+
   return (
-    <div className="authorization">
+    <div className="authorization" ref={authRef}>
       <button className="icon" onClick={() => setIsAuthorization(() => false)}>
         <CrossIcon />
       </button>
@@ -52,14 +59,16 @@ export function Authorization() {
           placeholder="Email или Имя пользователя"
           className="form__input"
           autoComplete="off"
-          ref={usernameInput}
+          onChange={(e) => setUsername(e.target.value)}
+          value={username}
           required
         />
         <input
           type="password"
           placeholder="Пароль"
           className="form__input"
-          ref={passwordInput}
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
           required
         />
         <div className="w-[390px] h-[1px] mx-auto bg-white opacity-50 my-[14px]"></div>
@@ -71,11 +80,19 @@ export function Authorization() {
           <GithubIcon />
           <span className="text-xs mr-[25%]">Продолжить с помощью Github</span>
         </button>
-        <button className="form__link ml-[54px] mt-3">
+        <button
+          className="form__link ml-[54px] mt-3"
+          onClick={() => setIsAuthProcess(false)}
+        >
           Зарегистрироваться
         </button>
-        <input className="form__authorize" type="submit" value="Войти" />
+        <input
+          className="form__authorize"
+          type="submit"
+          value="Войти"
+          disabled={!username || !password ? "true" : ""}
+        />
       </form>
     </div>
   );
-}
+});

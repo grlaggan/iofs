@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useState, useContext } from "react";
 import { ArrowIconDown } from "../post/icons";
-import { ApiUrlContext } from "../../pages/_app";
+import { Context } from "../../pages/_app";
 
 export function Filter({ categories }) {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
@@ -9,7 +9,25 @@ export function Filter({ categories }) {
   const [showCategoryDropdown, setCategorySortDropdown] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Все");
 
-  const { setUrlForGetPosts } = useContext(ApiUrlContext);
+  const { store } = useContext(Context);
+
+  const setUrlFilterData = () => {
+    const urlObj = new URL(store.urlPosts);
+
+    urlObj.searchParams.get("filter")
+      ? urlObj.searchParams.set("filter", "new")
+      : urlObj.searchParams.append("filter", "new");
+    return urlObj.toString();
+  };
+
+  const setUrlFilterLikes = () => {
+    const urlObj = new URL(store.urlPosts);
+
+    urlObj.searchParams.get("filter")
+      ? urlObj.searchParams.set("filter", "likes")
+      : urlObj.searchParams.append("filter", "likes");
+    return urlObj.toString();
+  };
 
   const handleSortSelect = (value) => {
     setShowSortDropdown(false);
@@ -46,14 +64,8 @@ export function Filter({ categories }) {
               )}
               onClick={() => {
                 handleSortSelect("По дате создания");
-                setUrlForGetPosts((lastUrl) => {
-                  const urlObj = new URL(lastUrl);
-
-                  urlObj.searchParams.get("filter")
-                    ? urlObj.searchParams.set("filter", "new")
-                    : urlObj.searchParams.append("filter", "new");
-                  return urlObj.toString();
-                });
+                const url = setUrlFilterData();
+                store.setUrlPosts(url);
               }}
             >
               По дате создания
@@ -67,14 +79,8 @@ export function Filter({ categories }) {
               )}
               onClick={() => {
                 handleSortSelect("По количеству лайков");
-                setUrlForGetPosts((lastUrl) => {
-                  const urlObj = new URL(lastUrl);
-
-                  urlObj.searchParams.get("filter")
-                    ? urlObj.searchParams.set("filter", "likes")
-                    : urlObj.searchParams.append("filter", "likes");
-                  return urlObj.toString();
-                });
+                const url = setUrlFilterLikes();
+                store.setUrlPosts(url);
               }}
             >
               По количеству лайков
@@ -105,12 +111,13 @@ export function Filter({ categories }) {
               )}
               onClick={() => {
                 handleCategorySelect("Все");
-                setUrlForGetPosts((lastUrl) => {
-                  const urlObj = new URL(lastUrl);
 
-                  urlObj.searchParams.delete("category");
-                  return urlObj.toString();
-                });
+                let urlObj = new URL(store.urlPosts);
+                urlObj.searchParams.delete("category");
+
+                urlObj = urlObj.toString();
+
+                store.setUrlPosts(urlObj);
               }}
             >
               Все
@@ -125,13 +132,15 @@ export function Filter({ categories }) {
                 )}
                 onClick={() => {
                   handleCategorySelect(category.name);
-                  setUrlForGetPosts((lastUrl) => {
-                    const urlObj = new URL(lastUrl);
-                    urlObj.searchParams.get("category")
-                      ? urlObj.searchParams.set("category", category.name)
-                      : urlObj.searchParams.append("category", category.name);
-                    return urlObj.toString();
-                  });
+
+                  let urlObj = new URL(store.urlPosts);
+                  urlObj.searchParams.get("category")
+                    ? urlObj.searchParams.set("category", category.name)
+                    : urlObj.searchParams.append("category", category.name);
+
+                  urlObj = urlObj.toString();
+
+                  store.setUrlPosts(urlObj);
                 }}
                 key={category.id}
               >

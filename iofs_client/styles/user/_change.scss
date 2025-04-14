@@ -1,0 +1,24 @@
+$main-white-color: #CCD0CF;
+
+.form-change__input {
+  display: flex;
+  width: 370px;
+  height: 35px;
+  padding: 7px 20px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: rgba(155, 168, 171, 0.50);
+  margin-inline: auto;
+  border-radius: 8px;
+  color: $main-white-color;
+}
+
+.change-avatar {
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}

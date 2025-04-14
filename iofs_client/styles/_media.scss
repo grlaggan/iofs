@@ -2,20 +2,9 @@
 @import './main/main-media';
 
 @include header {
-  .header {
-    .logo {
-      font-size: 24px;
-    }
-
-    .header__input {
-      font-size: 12px;
-      padding: 7px 15px;
-    }
-
-    .button {
+    .profile {
       font-size: 12px;
     }
-  }
 }
 
 @include main_two_blocks {

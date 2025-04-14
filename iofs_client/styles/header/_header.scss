@@ -1,6 +1,14 @@
 $main-white-color: #CCD0CF;
+$main-bg-blue-color: #06141B;
 
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: $main-bg-blue-color;
+
   border-bottom: 1px $main-white-color solid;
   display: flex;
   justify-content: space-between;

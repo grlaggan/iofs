@@ -1,26 +1,29 @@
 import { Header } from "../components/header";
 import { Main } from "../components/main";
-import { createContext } from "react";
-import { useInitAuth } from "../hooks";
+import { Context } from "./_app";
+import { useContext, useEffect } from "react";
+import { observer } from "mobx-react-lite";
+import { Blurred } from "./_app";
 
-export const ApiUrlContext = createContext({
-  urlForGetPosts: "",
-  setUrlForGetPosts: () => {},
-});
+const HomePage = observer(() => {
+  const { store } = useContext(Context);
 
-export const Blurred = createContext();
+  const { isAuthorization } = useContext(Blurred);
 
-export default function HomePage() {
-  useInitAuth();
-  // const [urlForGetPosts, setUrlForGetPosts] = useState(
-  //   "http://127.0.0.1:5000/posts/"
-  // );
-  // const [isAuthorization, setIsAuthorization] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      store.checkAuth();
+    }
+  }, []);
 
   return (
     <>
       <Header></Header>
-      <Main></Main>
+      <div className={isAuthorization && "blurred"}>
+        <Main></Main>
+      </div>
     </>
   );
-}
+});
+
+export default HomePage;

@@ -1,31 +1,50 @@
-import { AuthProvider } from "../components/user-logic";
 import "../styles/globals.css";
 import { Roboto } from "next/font/google";
 import { createContext, useState } from "react";
-import { Authorization } from "../components/user-logic";
+import { Authorization } from "../components/user-logic/authorization";
+import { Registration } from "../components/user-logic/registration";
+import Store from "../components/store";
+import { observer } from "mobx-react-lite";
+
+const store = new Store();
 
 const roboto = Roboto({ subsets: ["latin", "cyrillic"] });
 export const Blurred = createContext();
-export const ApiUrlContext = createContext({
-  urlForGetPosts: "http://127.0.0.1:5000/posts/",
-  setUrlForGetPosts: () => {},
+export const Context = createContext({ store });
+export const RegContext = createContext();
+
+const App = observer(({ Component, pageProps }) => {
+  const [isAuthorization, setIsAuthorization] = useState(false);
+  const [isAuthProcess, setIsAuthProcess] = useState(false);
+
+  return (
+    <Context value={{ store }}>
+      <Blurred value={{ isAuthorization, setIsAuthorization }}>
+        <RegContext.Provider value={{ isAuthProcess, setIsAuthProcess }}>
+          {isAuthorization && isAuthProcess && <Authorization />}
+          {isAuthorization && !isAuthProcess && <Registration />}
+          <div inert={isAuthorization ? true : undefined}>
+            {store.loadUserLogin ? (
+              <div class="frame">
+                <span class="image image-loading">
+                  <span class="spinner">
+                    <span class="spinner-inner spinner-wandering-cubes">
+                      <span class="spinner-item"></span>
+                      <span class="spinner-item"></span>
+                    </span>
+                  </span>
+                </span>
+              </div>
+            ) : (
+              <div className={roboto.className}>
+                <Component {...pageProps} />
+              </div>
+            )}
+          </div>
+        </RegContext.Provider>
+      </Blurred>
+    </Context>
+  );
 });
 
-export default function App({ Component, pageProps }) {
-  const [isAuthorization, setIsAuthorization] = useState(false);
-  const [urlForGetPosts, setUrlForGetPosts] = useState(
-    "http://127.0.0.1:5000/posts/"
-  );
-  return (
-    <AuthProvider>
-      <ApiUrlContext.Provider value={{ urlForGetPosts, setUrlForGetPosts }}>
-        <Blurred value={{ isAuthorization, setIsAuthorization }}>
-          {isAuthorization && <Authorization />}
-          <div className={roboto.className}>
-            <Component {...pageProps} />
-          </div>
-        </Blurred>
-      </ApiUrlContext.Provider>
-    </AuthProvider>
-  );
-}
+export default App;

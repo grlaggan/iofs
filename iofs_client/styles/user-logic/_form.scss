@@ -46,6 +46,12 @@ $main-white-color: #CCD0CF;
     align-items: center;
     padding: 12px 16px;
     background-color: $main-white-color;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.2;
+    }
   }
 
   .disabled {

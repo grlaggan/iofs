@@ -7,6 +7,9 @@
 @use './user-logic/authotization';
 @use './post/detail_post';
 @use './user/user';
+@use './preloader';
+@use './user/change';
+@use './post/create';
 
 @tailwind base;
 @tailwind components;
@@ -17,6 +20,7 @@
 
 $main-bg-blue-color: #06141B;
 $main-white-color: #CCD0CF;
+$main-button-color: #253745;
 
 body {
   background-color: $main-bg-blue-color;
@@ -25,7 +29,8 @@ body {
     background-color: $main-white-color;
   }
 
-  .blured {
+  .blurred {
+    transition: all 0.2s ease;
     filter: blur(2px);
   }
 
@@ -35,5 +40,9 @@ body {
 
   .liked {
     color: #E63946;
+  }
+
+  .bg-button-color {
+    background-color: $main-button-color;
   }
 }

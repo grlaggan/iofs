@@ -10,4 +10,8 @@ $main-button-color: #253745;
   background-color: $main-button-color;
 
   border-radius: 50px;
+
+  &:disabled {
+    opacity: 0.5;
+  }
 }

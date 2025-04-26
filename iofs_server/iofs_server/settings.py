@@ -9,23 +9,29 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
+from dotenv import load_dotenv
+
 from datetime import timedelta
 from pathlib import Path
+
+from rest_framework_social_oauth2.settings import DRFSO2_PROPRIETARY_BACKEND_NAME
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2$n#1=@vy=&e@o5y!uw*1a47$9qbllhnkduq&itv4k=sx!w(wf'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -71,6 +77,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -86,19 +94,24 @@ ASGI_APPLICATION = 'iofs_server.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'iofs_api_db',
-        'USER': 'postgres',
-        'PASSWORD': 'qPz8am91',
-        'HOST': 'localhost',
-        'PORT': '8000',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT'),
     }
 }
+
+# Redis
+
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = os.getenv('REDIS_PORT')
 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)],
+            'hosts': [(REDIS_HOST, REDIS_PORT)],
         }
     }
 }
@@ -164,15 +177,17 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
+FRONTEND_URL = os.getenv('FRONTEND_URL')
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    FRONTEND_URL,
 ]
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
+    FRONTEND_URL,
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 
 
 AUTH_USER_MODEL = 'iofs_api.User'
+

@@ -6,6 +6,7 @@ import { useContext, useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
+import Head from "next/head";
 
 const Change = observer(() => {
   const { store } = useContext(Context);
@@ -25,7 +26,7 @@ const Change = observer(() => {
   const passwordRef = useRef(null);
 
   const [preview, setPreview] = useState(
-    `http://127.0.0.1:5000${store.user?.avatar}`
+    store.user?.avatar ? `http://127.0.0.1:5000${store.user?.avatar}` : null
   );
 
   const inputUploadAvatarRef = useRef(null);
@@ -104,6 +105,9 @@ const Change = observer(() => {
 
   return (
     <>
+      <Head>
+        <title>Редактирование профиля</title>
+      </Head>
       <Header />
       <main className="main px-4" ref={changeRef}>
         <Link
@@ -112,7 +116,7 @@ const Change = observer(() => {
         >
           Назад
         </Link>
-        <div className="flex gap-12 mx-16 flex-wrap">
+        <div className="change flex gap-12 mx-16 flex-wrap">
           <form
             className="flex flex-col items-center gap-3"
             ref={profileRef}

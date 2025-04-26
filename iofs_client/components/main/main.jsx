@@ -34,7 +34,7 @@ export function Main() {
       {
         y: 0,
         opacity: 1,
-        duration: 1,
+        duration: 0.5,
       }
     );
   }, []);

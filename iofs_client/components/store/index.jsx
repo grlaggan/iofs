@@ -9,9 +9,19 @@ export default class Store {
   cachedPost = {};
   loadUserLogin = false;
   categories = [];
+  errorAuth = false;
+  errorReg = false;
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  setErrorReg(value) {
+    this.errorReg = value;
+  }
+
+  setErrorAuth(value) {
+    this.errorAuth = value;
   }
 
   setCachedPost(post) {
@@ -47,7 +57,9 @@ export default class Store {
       this.setIsAuth(true);
       this.setLoadUserLogin(false);
     } catch (error) {
-      console.log(error.response?.data?.message);
+      this.setLoadUserLogin(false);
+      this.setErrorAuth(true);
+      console.log(error.response);
     }
   }
 
@@ -56,7 +68,8 @@ export default class Store {
       await AuthService.registration(username, password1, password2);
       alert("Успешная регистрация!");
     } catch (error) {
-      console.log(error.response?.data?.message);
+      this.setErrorReg(true);
+      console.log(error.response?.data);
     }
   }
 

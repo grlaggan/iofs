@@ -4,6 +4,7 @@ import { Context } from "./_app";
 import { useContext, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Blurred } from "./_app";
+import Head from "next/head";
 
 const HomePage = observer(() => {
   const { store } = useContext(Context);
@@ -18,6 +19,9 @@ const HomePage = observer(() => {
 
   return (
     <>
+      <Head>
+        <title>Главная страница</title>
+      </Head>
       <Header></Header>
       <div className={isAuthorization && "blurred"}>
         <Main></Main>

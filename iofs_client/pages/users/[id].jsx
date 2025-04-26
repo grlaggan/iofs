@@ -9,6 +9,7 @@ import clsx from "clsx";
 import { observer } from "mobx-react-lite";
 import defaultAvatar from "../../components/post/images/default-avatar.png";
 import gsap from "gsap";
+import Head from "next/head";
 
 const UserDetail = observer(() => {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
@@ -62,6 +63,9 @@ const UserDetail = observer(() => {
 
   return (
     <>
+      <Head>
+        <title>Личный кабинет</title>
+      </Head>
       {load || !store.isAuth ? (
         <div class="frame">
           <span class="image image-loading">

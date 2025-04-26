@@ -10,6 +10,7 @@
 @use './preloader';
 @use './user/change';
 @use './post/create';
+@use './error/error';
 
 @tailwind base;
 @tailwind components;

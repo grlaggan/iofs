@@ -7,6 +7,7 @@ import $api from "../../components/http";
 import Link from "next/link";
 import clsx from "clsx";
 import gsap from "gsap";
+import Head from "next/head";
 
 const Create = observer(() => {
   const { store } = useContext(Context);
@@ -56,6 +57,9 @@ const Create = observer(() => {
 
   return (
     <>
+      <Head>
+        <title>Создание поста</title>
+      </Head>
       <Header />
       <main className="main px-4" ref={createRef}>
         <Link
@@ -65,7 +69,7 @@ const Create = observer(() => {
           Назад
         </Link>
         <form
-          className="flex flex-col items-start gap-2 max-w-[400px] ml-[64px]"
+          className="create flex flex-col items-start gap-2 max-w-[400px] ml-[64px]"
           onSubmit={(e) => {
             e.preventDefault();
             create();
@@ -84,6 +88,7 @@ const Create = observer(() => {
               className="form-create__input"
               placeholder="Тема"
               required
+              maxLength={32}
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
               autoComplete="off"
@@ -134,6 +139,7 @@ const Create = observer(() => {
               maxLength={100}
               onChange={(e) => setDescription(e.target.value)}
               autoComplete="off"
+              required
             >
               {description}
             </textarea>
@@ -147,6 +153,7 @@ const Create = observer(() => {
               placeholder="Текст"
               onChange={(e) => setText(e.target.value)}
               autoComplete="off"
+              required
             >
               {text}
             </textarea>

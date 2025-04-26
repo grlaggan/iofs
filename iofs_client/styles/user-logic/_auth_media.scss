@@ -1,0 +1,17 @@
+@mixin auth() {
+  @media(max-width: 500px) {
+    @content
+  }
+};
+
+@mixin auth_middle() {
+  @media(max-width: 400px) {
+    @content
+  }
+};
+
+@mixin auth_small() {
+  @media(max-width: 375px) {
+    @content
+  }
+}

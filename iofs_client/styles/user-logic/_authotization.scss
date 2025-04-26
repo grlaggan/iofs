@@ -3,7 +3,7 @@ $main-bg-blue-color: #06141B;
 
 .authorization {
   position: absolute;
-  width: 500px;
+  max-width: 500px;
   background-color: $main-bg-blue-color;
   z-index: 20;
   transform: translate(-50%, -50%);
@@ -11,4 +11,5 @@ $main-bg-blue-color: #06141B;
   left: 50%;
   border-radius: 24px;
   padding-bottom: 16px;
+  padding-inline: 53px;
 }

@@ -1,11 +1,10 @@
-import { GoogleIcon } from "../main/icons";
-import { GithubIcon } from "../main/icons";
 import { useContext, useState, useRef, useEffect } from "react";
 import { CrossIcon } from "./icons";
 import { Blurred } from "../../pages/_app";
 import { RegContext } from "../../pages/_app";
 import { Context } from "../../pages/_app";
 import { observer } from "mobx-react-lite";
+import FormValidate from "../validate/validate";
 import gsap from "gsap";
 
 export const Authorization = observer(() => {
@@ -18,11 +17,33 @@ export const Authorization = observer(() => {
   const [username, setUsername] = useState();
   const { store } = useContext(Context);
 
+  const [isValid, setIsValid] = useState(false);
+
   const authorize = () => {
     store.login(username, password);
     setIsAuthorization(false);
     store.setLoadUserLogin(true);
   };
+
+  useEffect(() => {
+    const formValidate = new FormValidate();
+
+    document.addEventListener(
+      "submit",
+      (event) => {
+        setIsValid(formValidate.onSubmit(event));
+      },
+      { capture: true }
+    );
+
+    document.addEventListener(
+      "blur",
+      (event) => {
+        formValidate.onBlur(event);
+      },
+      { capture: true }
+    );
+  }, []);
 
   useEffect(() => {
     gsap.fromTo(
@@ -51,35 +72,50 @@ export const Authorization = observer(() => {
         className="form"
         onSubmit={(e) => {
           e.preventDefault();
-          authorize();
+          isValid && authorize();
         }}
+        data-js-form
+        noValidate
       >
-        <input
-          type="text"
-          placeholder="Email или Имя пользователя"
-          className="form__input"
-          autoComplete="off"
-          onChange={(e) => setUsername(e.target.value)}
-          value={username}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Пароль"
-          className="form__input"
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-          required
-        />
-        <div className="w-[390px] h-[1px] mx-auto bg-white opacity-50 my-[14px]"></div>
-        <button className="form__oauth">
-          <GoogleIcon />
-          <span className="text-xs mr-[25%]">Продолжить с помощью Google</span>
-        </button>
-        <button className="form__oauth">
-          <GithubIcon />
-          <span className="text-xs mr-[25%]">Продолжить с помощью Github</span>
-        </button>
+        <div className="max-w-[393px] mx-auto">
+          <input
+            id="login"
+            type="text"
+            placeholder="Email или Имя пользователя"
+            className="form__input"
+            autoComplete="off"
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
+            minLength={3}
+            maxLength={12}
+            aria-errormessage="login-errors"
+            required
+          />
+          <span
+            className="form__input-errors text-red-300"
+            id="login-errors"
+            data-js-form-input-errors
+          ></span>
+        </div>
+        <div className="max-w-[393px] mx-auto">
+          <input
+            id="password"
+            type="password"
+            placeholder="Пароль"
+            className="form__input"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            aria-errormessage="password-errors"
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+            title="Пароль должен содержать минимум 8 символов, включая одну цифру, одну заглавную и одну строчную буквы"
+            required
+          />
+          <span
+            className="form__input-errors text-red-300"
+            id="password-errors"
+            data-js-form-input-errors
+          ></span>
+        </div>
         <button
           className="form__link ml-[54px] mt-3"
           onClick={() => setIsAuthProcess(false)}

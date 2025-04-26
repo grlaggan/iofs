@@ -58,6 +58,83 @@
   opacity: 0.5;
 }
 
+@media (max-width: 525px) {
+  .create {
+    margin-inline: 3rem !important;
+  }
+}
+@media (max-width: 500px) {
+  .create {
+    margin-inline: 2rem !important;
+  }
+}
+@media (max-width: 460px) {
+  .create {
+    margin-inline: 1rem !important;
+  }
+  .create .form-create__input {
+    width: 340px !important;
+  }
+  .create .form-create__textarea {
+    width: 340px !important;
+  }
+  .create .form-create__textarea--text {
+    width: 340px !important;
+  }
+}
+@media (max-width: 400px) {
+  .form-create__input {
+    width: 310px !important;
+  }
+  .form-create__textarea {
+    width: 310px !important;
+  }
+  .form-create__textarea--text {
+    width: 310px !important;
+  }
+}
+@media (max-width: 525px) {
+  .change {
+    margin-inline: 3rem !important;
+  }
+}
+@media (max-width: 500px) {
+  .change {
+    margin-inline: 2rem !important;
+  }
+}
+@media (max-width: 460px) {
+  .change {
+    margin-inline: 1rem !important;
+  }
+  .form-change__input {
+    width: 340px !important;
+  }
+}
+@media (max-width: 400px) {
+  .form-change__input {
+    width: 310px !important;
+  }
+}
+@media (max-width: 500px) {
+  .form .form__input {
+    width: 300px !important;
+  }
+  .form .form__authorize {
+    width: 250px !important;
+  }
+  .authorization {
+    max-width: 400px !important;
+  }
+}
+@media (max-width: 400px) {
+  .form .form__input {
+    width: 250px !important;
+  }
+  .form .form__authorize {
+    width: 200px !important;
+  }
+}
 @media (max-width: 480px) {
   .profile {
     font-size: 12px;
@@ -292,7 +369,7 @@
 
 .authorization {
   position: absolute;
-  width: 500px;
+  max-width: 500px;
   background-color: #06141B;
   z-index: 20;
   transform: translate(-50%, -50%);
@@ -300,6 +377,7 @@
   left: 50%;
   border-radius: 24px;
   padding-bottom: 16px;
+  padding-inline: 53px;
 }
 
 .detail-post {
@@ -477,6 +555,15 @@ textarea::-webkit-scrollbar {
   background-color: rgba(155, 168, 171, 0.5);
   width: 400px;
   height: 150px;
+}
+
+.error {
+  border-radius: 5px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.error:hover {
+  filter: brightness(1.2);
 }
 
 @tailwind base;

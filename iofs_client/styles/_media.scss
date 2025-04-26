@@ -1,5 +1,107 @@
 @import './header/header-media';
 @import './main/main-media';
+@import './user-logic/auth_media';
+@import './user/change_media';
+@import './post/create-media';
+
+@include create {
+  .create {
+    margin-inline: 3rem !important;
+  }
+}
+
+@include create_middle {
+  .create {
+    margin-inline: 2rem !important;
+  }
+}
+
+@include create_small {
+  .create {
+    margin-inline: 1rem !important;
+
+    .form-create__input {
+      width: 340px !important;
+    }
+  
+    .form-create__textarea {
+      width: 340px !important;
+    }
+
+    .form-create__textarea--text {
+      width: 340px !important;
+    }
+  }
+
+}
+
+@include create_very-small {
+  .form-create__input {
+    width: 310px !important;
+  }
+
+  .form-create__textarea {
+    width: 310px !important;
+  }
+
+  .form-create__textarea--text {
+    width: 310px !important;
+  }
+}
+
+@include change {
+  .change {
+    margin-inline: 3rem !important;
+  }
+}
+
+@include change_middle {
+  .change {
+    margin-inline: 2rem !important;
+  }
+}
+
+@include change_small {
+  .change {
+    margin-inline: 1rem !important;
+  }
+
+  .form-change__input {
+    width: 340px !important;
+  }
+}
+
+@include change_very-small {
+  .form-change__input {
+    width: 310px !important;
+  }
+}
+
+@include auth {
+  .form {
+    .form__input {
+      width: 300px !important;
+    }
+    .form__authorize {
+      width: 250px !important;
+    }
+  }
+
+  .authorization {
+    max-width: 400px !important;
+  }
+}
+
+@include auth_middle {
+  .form {
+    .form__input {
+      width: 250px !important;
+    }
+    .form__authorize {
+      width: 200px !important;
+    }
+  }
+}
 
 @include header {
     .profile {

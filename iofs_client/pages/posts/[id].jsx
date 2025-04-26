@@ -12,6 +12,7 @@ import $api from "../../components/http";
 import defaultAvatarSrc from "../../components/post/images/default-avatar.png";
 import axios from "axios";
 import gsap from "gsap";
+import Head from "next/head";
 
 export default function DetailPost() {
   const router = useRouter();
@@ -155,6 +156,9 @@ export default function DetailPost() {
     <>
       {postTheme ? (
         <>
+          <Head>
+            <title>{postTheme}</title>
+          </Head>
           <Header />
           <main className="main px-4" ref={mainRef}>
             <Link

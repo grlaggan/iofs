@@ -5,6 +5,8 @@ import { Authorization } from "../components/user-logic/authorization";
 import { Registration } from "../components/user-logic/registration";
 import Store from "../components/store";
 import { observer } from "mobx-react-lite";
+import { Error } from "../components/error";
+import Head from "next/head";
 
 const store = new Store();
 
@@ -19,6 +21,11 @@ const App = observer(({ Component, pageProps }) => {
 
   return (
     <Context value={{ store }}>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      {store.errorAuth && <Error text="Не удалось войти." />}
+      {store.errorReg && <Error text="Не удалось зарегистрироваться." />}
       <Blurred value={{ isAuthorization, setIsAuthorization }}>
         <RegContext.Provider value={{ isAuthProcess, setIsAuthProcess }}>
           {isAuthorization && isAuthProcess && <Authorization />}

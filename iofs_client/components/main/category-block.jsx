@@ -16,7 +16,7 @@ export function CategoryBlock({ image, categoryName, refBlock }) {
   return (
     <div
       href="#"
-      className="category-block cursor-pointer hover:underline"
+      className="category-block cursor-pointer"
       ref={refBlock}
       onClick={() => {
         const url = setUrlWithCategory();

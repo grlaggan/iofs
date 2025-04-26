@@ -31,6 +31,8 @@ staticfiles/
 /iofs_client/out/
 /iofs_client/.turbo/
 
+/iofs_server/.env/
+
 # Окружение и IDE
 /iofs_client/.env*.local
 /iofs_client/.next-env.d.ts
